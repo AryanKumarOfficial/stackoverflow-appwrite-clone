@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 }
 
-export async function DELETE(request: NextResponse) {
+export async function DELETE(request: NextRequest) {
     try {
         const {answerId} = await request.json();
         const answer = await databases.getDocument(db, answerCollection, answerId);
