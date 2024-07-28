@@ -19,7 +19,7 @@ export default async function createVoteCollection() {
         databases.createEnumAttribute(db, voteCollection, "type", ["question", "answer"], true),
         databases.createStringAttribute(db, voteCollection, "typeId", 50, true),
         databases.createEnumAttribute(db, voteCollection, "voteStatus", ["upVote", "downVote"], true),
-        databases.createStringAttribute(db, voteCollection, "voteById", 50, true)
+        databases.createStringAttribute(db, voteCollection, "votedById", 50, true)
     ]);
     console.log("vote attributes created");
 }

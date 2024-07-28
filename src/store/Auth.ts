@@ -1,9 +1,9 @@
 import {create} from "zustand";
 import {immer} from "zustand/middleware/immer";
 import {persist} from "zustand/middleware";
-
 import {AppwriteException, ID, Models} from "appwrite";
 import {account} from "@/Models/client/config";
+import {StoreApi} from "zustand";
 
 export interface UserPrefs {
     reputation: number;
@@ -34,81 +34,90 @@ interface IAuthStore {
     ): Promise<{
         success: boolean;
         error?: AppwriteException | null;
-    }>
+    }>;
 
     logout(): Promise<void>;
 }
 
 export const useAuthStore = create<IAuthStore>()(
     persist(
-        immer((set) => ({
+        immer((set: StoreApi<IAuthStore>['setState']) => ({
             session: null,
             jwt: null,
             user: null,
             hydrated: false,
 
             setHydrated() {
-                set({hydrated: true})
+                set({hydrated: true});
             },
+
             async verifySession() {
                 try {
                     const session = await account.getSession("current");
                     set({session});
-
                 } catch (error) {
-                    console.log(error)
+                    console.error("Failed to verify session:", error);
                 }
             },
 
             async login(email: string, password: string) {
                 try {
                     const session = await account.createEmailPasswordSession(email, password);
-                    const [user, {jwt}]
-                        = await Promise.all([
+                    const [user, {jwt}] = await Promise.all([
                         account.get<UserPrefs>(),
                         account.createJWT()
-                    ])
-                    if (!user.prefs?.reputation) await account.updatePrefs<UserPrefs>({
-                        reputation: 0
-                    })
-                    set({session, user, jwt})
-                    return {success: true}
+                    ]);
+
+                    if (!user.prefs?.reputation) {
+                        await account.updatePrefs<UserPrefs>({reputation: 0});
+                    }
+
+                    set({session, user, jwt});
+
+                    return {success: true};
                 } catch (error) {
-                    console.log(error)
+                    console.error("Login failed:", error);
                     return {
                         success: false,
-                        error: error instanceof AppwriteException ? error : null
-                    }
+                        error: error instanceof AppwriteException ? error : null,
+                    };
                 }
             },
+
             async createAccount(name: string, email: string, password: string) {
                 try {
-                    await account.create(ID.unique(), email, password, name)
-                    return {success: true}
+                    console.log(name, email, password, "==>data")
+                    await account.create(ID.unique()?.toString(), email, password, name);
+                    return {success: true};
                 } catch (error) {
-                    console.log(error)
+                    console.error("Account creation failed:", error);
                     return {
                         success: false,
-                        error: error instanceof AppwriteException ? error : null
-                    }
+                        error: error instanceof AppwriteException ? error : null,
+                    };
                 }
             },
+
             async logout() {
                 try {
                     await account.deleteSessions();
-                    set({session: null, jwt: null, user: null})
+                    set({session: null, jwt: null, user: null});
                 } catch (error) {
-                    console.log(error)
+                    console.error("Logout failed:", error);
                 }
-            }
+            },
         })),
         {
             name: "auth",
             onRehydrateStorage() {
                 return (state, error) => {
-                    if (!error) state?.setHydrated();
-                }
-            }
+                    if (error) {
+                        console.error("Failed to rehydrate storage:", error);
+                    } else {
+                        state?.setHydrated();
+                    }
+                };
+            },
         }
     )
-)
+);
