@@ -5,6 +5,7 @@ import "./globals.css";
 const inter = Inter({subsets: ["latin"]});
 import {cn} from "@/lib/utils";
 import Header from "./components/Header";
+import Footer from "@/app/components/Footer";
 
 export const metadata: Metadata = {
     title: "Create Next App",
@@ -20,7 +21,9 @@ export default function RootLayout({
         <html lang="en" className="dark">
         <body className={cn(inter.className, "dark:bg-black dark:text-white")}>
         <Header/>
-        {children}</body>
+        {children}
+        <Footer/>
+        </body>
         </html>
     );
 }

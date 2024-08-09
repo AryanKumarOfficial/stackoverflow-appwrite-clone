@@ -3,7 +3,6 @@ import {immer} from "zustand/middleware/immer";
 import {persist} from "zustand/middleware";
 import {AppwriteException, ID, Models} from "appwrite";
 import {account} from "@/Models/client/config";
-import {StoreApi} from "zustand";
 
 export interface UserPrefs {
     reputation: number;
@@ -41,7 +40,7 @@ interface IAuthStore {
 
 export const useAuthStore = create<IAuthStore>()(
     persist(
-        immer((set: StoreApi<IAuthStore>['setState']) => ({
+        immer((set) => ({
             session: null,
             jwt: null,
             user: null,
@@ -57,6 +56,7 @@ export const useAuthStore = create<IAuthStore>()(
                     set({session});
                 } catch (error) {
                     console.error("Failed to verify session:", error);
+                    set({session: null});
                 }
             },
 
@@ -86,8 +86,7 @@ export const useAuthStore = create<IAuthStore>()(
 
             async createAccount(name: string, email: string, password: string) {
                 try {
-                    console.log(name, email, password, "==>data")
-                    await account.create(ID.unique()?.toString(), email, password, name);
+                    await account.create(ID.unique(), email, password, name);
                     return {success: true};
                 } catch (error) {
                     console.error("Account creation failed:", error);
