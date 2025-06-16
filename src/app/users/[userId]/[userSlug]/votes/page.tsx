@@ -12,7 +12,7 @@ const Page = async ({
                         searchParams,
                     }: {
     params: { userId: string; userSlug: string };
-    searchParams: { page?: string; voteStatus?: "upvoted" | "downvoted" };
+    searchParams: { page?: string; voteStatus?: "upVote" | "downVote" };
 }) => {
     searchParams.page ||= "1";
 
@@ -74,10 +74,9 @@ const Page = async ({
                         </Link>
                     </li>
                     <li>
-                        <Link
-                            href={`/users/${params.userId}/${params.userSlug}/votes?voteStatus=upvoted`}
+                        <Link                            href={`/users/${params.userId}/${params.userSlug}/votes?voteStatus=upVote`}
                             className={`block w-full rounded-full px-3 py-0.5 duration-200 ${
-                                searchParams?.voteStatus === "upvoted"
+                                searchParams?.voteStatus === "upVote"
                                     ? "bg-white/20"
                                     : "hover:bg-white/20"
                             }`}
@@ -86,10 +85,9 @@ const Page = async ({
                         </Link>
                     </li>
                     <li>
-                        <Link
-                            href={`/users/${params.userId}/${params.userSlug}/votes?voteStatus=downvoted`}
+                        <Link                            href={`/users/${params.userId}/${params.userSlug}/votes?voteStatus=downVote`}
                             className={`block w-full rounded-full px-3 py-0.5 duration-200 ${
-                                searchParams?.voteStatus === "downvoted"
+                                searchParams?.voteStatus === "downVote"
                                     ? "bg-white/20"
                                     : "hover:bg-white/20"
                             }`}

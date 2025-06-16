@@ -52,7 +52,7 @@ const VoteButtons = ({
                 method: "POST",
                 body: JSON.stringify({
                     votedById: user.$id,
-                    voteStatus: "upvoted",
+                    voteStatus: "upVote",
                     type,
                     typeId: id,
                 }),
@@ -79,7 +79,7 @@ const VoteButtons = ({
                 method: "POST",
                 body: JSON.stringify({
                     votedById: user.$id,
-                    voteStatus: "downvoted",
+                    voteStatus: "downVote",
                     type,
                     typeId: id,
                 }),
@@ -101,7 +101,7 @@ const VoteButtons = ({
             <button
                 className={cn(
                     "flex h-10 w-10 items-center justify-center rounded-full border p-1 duration-200 hover:bg-white/10",
-                    votedDocument && votedDocument.voteStatus === "upvoted"
+                    votedDocument && votedDocument.voteStatus === "upVote"
                         ? "border-orange-500 text-orange-500"
                         : "border-white/30"
                 )}
@@ -113,7 +113,7 @@ const VoteButtons = ({
             <button
                 className={cn(
                     "flex h-10 w-10 items-center justify-center rounded-full border p-1 duration-200 hover:bg-white/10",
-                    votedDocument && votedDocument.voteStatus === "downvoted"
+                    votedDocument && votedDocument.voteStatus === "downVote"
                         ? "border-orange-500 text-orange-500"
                         : "border-white/30"
                 )}

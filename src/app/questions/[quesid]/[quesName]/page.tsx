@@ -35,16 +35,14 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
             databases.listDocuments(db, answerCollection, [
                 Query.orderDesc("$createdAt"),
                 Query.equal("questionId", params.quesid),]),
-            databases.listDocuments(db, voteCollection, [
-                Query.equal("typeId", params.quesid),
+            databases.listDocuments(db, voteCollection, [                Query.equal("typeId", params.quesid),
                 Query.equal("type", "question"),
-                Query.equal("voteStatus", "upvoted"),
+                Query.equal("voteStatus", "upVote"),
                 Query.limit(1), // for optimization
             ]),
-            databases.listDocuments(db, voteCollection, [
-                Query.equal("typeId", params.quesid),
+            databases.listDocuments(db, voteCollection, [                Query.equal("typeId", params.quesid),
                 Query.equal("type", "question"),
-                Query.equal("voteStatus", "downvoted"),
+                Query.equal("voteStatus", "downVote"),
                 Query.limit(1), // for optimization
             ]), databases.listDocuments(db, commentCollection, [
                 Query.equal("type", "question"),
@@ -100,16 +98,14 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                                 Query.equal("type", "answer"),
                                 Query.orderDesc("$createdAt"),
                             ]),
-                            databases.listDocuments(db, voteCollection, [
-                                Query.equal("typeId", answer.$id),
+                            databases.listDocuments(db, voteCollection, [                                Query.equal("typeId", answer.$id),
                                 Query.equal("type", "answer"),
-                                Query.equal("voteStatus", "upvoted"),
+                                Query.equal("voteStatus", "upVote"),
                                 Query.limit(1), // for optimization
                             ]),
-                            databases.listDocuments(db, voteCollection, [
-                                Query.equal("typeId", answer.$id),
+                            databases.listDocuments(db, voteCollection, [                                Query.equal("typeId", answer.$id),
                                 Query.equal("type", "answer"),
-                                Query.equal("voteStatus", "downvoted"),
+                                Query.equal("voteStatus", "downVote"),
                                 Query.limit(1), // for optimization
                             ]),
                         ]);

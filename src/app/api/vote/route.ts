@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
                 if (response.documents[0]) {
                     await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
                         reputation:
-                        // that means prev vote was "upvoted" and new value is "downvoted" so we have to decrease the reputation
+                        // that means prev vote was "upVote" and new value is "downVote" so we have to decrease the reputation
                             response.documents[0].voteStatus === "upVote"
                                 ? Math.max(0, currentReputation - 1)
                                 : currentReputation + 1,
