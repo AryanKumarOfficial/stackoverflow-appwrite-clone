@@ -4,7 +4,7 @@
 
 <h3>A modern StackOverflow clone built with Next.js and Appwrite</h3>
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://riverflow-demo.vercel.app)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://riverflows.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![Appwrite](https://img.shields.io/badge/Appwrite-orange)](https://appwrite.io/)
@@ -18,7 +18,7 @@
 
 <p>Riverflow is a modern Q&A platform inspired by StackOverflow, where users can ask questions, provide answers, vote on content, and contribute to a knowledge-sharing community.</p>
 
-[Live Demo](https://riverflow-demo.vercel.app) • [Report Bug](https://github.com/dev-username/riverflow/issues) • [Request Feature](https://github.com/dev-username/riverflow/issues)
+[Live Demo](https://riverflows.vercel.app) • [Report Bug](https://github.com/dev-username/riverflow/issues) • [Request Feature](https://github.com/dev-username/riverflow/issues)
 
 </div>
 
