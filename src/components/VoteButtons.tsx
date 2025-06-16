@@ -8,6 +8,7 @@ import {IconCaretUpFilled, IconCaretDownFilled} from "@tabler/icons-react";
 import {ID, Models, Query} from "appwrite";
 import {useRouter} from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 const VoteButtons = ({
                          type,
@@ -64,7 +65,7 @@ const VoteButtons = ({
             setVoteResult(() => data.data.voteResult);
             setVotedDocument(() => data.data.document);
         } catch (error: any) {
-            window.alert(error?.message || "Something went wrong");
+            toast.error(error?.message || "Something went wrong");
         }
     };
 
@@ -91,7 +92,7 @@ const VoteButtons = ({
             setVoteResult(() => data.data.voteResult);
             setVotedDocument(() => data.data.document);
         } catch (error: any) {
-            window.alert(error?.message || "Something went wrong");
+            toast.error(error?.message || "Something went wrong");
         }
     };
 

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
                 
                 await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
                     reputation:
-                        response.documents[0].voteStatus === "upvoted"
+                        response.documents[0].voteStatus === "upVote"
                             ? Math.max(0, currentReputation - 1)  // Ensure reputation doesn't go below 0
                             : currentReputation + 1,
                 });
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
                     await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
                         reputation:
                         // that means prev vote was "upvoted" and new value is "downvoted" so we have to decrease the reputation
-                            response.documents[0].voteStatus === "upvoted"
+                            response.documents[0].voteStatus === "upVote"
                                 ? Math.max(0, currentReputation - 1)
                                 : currentReputation + 1,
                     });
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
                     await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
                         reputation:
                         // for new votes, upvotes add reputation, downvotes reduce it
-                            voteStatus === "upvoted"
+                            voteStatus === "upVote"
                                 ? currentReputation + 1
                                 : Math.max(0, currentReputation - 1),
                     });
@@ -83,14 +83,14 @@ export async function POST(request: NextRequest) {
                 databases.listDocuments(db, voteCollection, [
                     Query.equal("type", type),
                     Query.equal("typeId", typeId),
-                    Query.equal("voteStatus", "upvoted"),
+                    Query.equal("voteStatus", "upVote"),
                     Query.equal("votedById", votedById),
                     Query.limit(1), // for optimization as we only need total
                 ]),
                 databases.listDocuments(db, voteCollection, [
                     Query.equal("type", type),
                     Query.equal("typeId", typeId),
-                    Query.equal("voteStatus", "downvoted"),
+                    Query.equal("voteStatus", "downVote"),
                     Query.equal("votedById", votedById),
                     Query.limit(1), // for optimization as we only need total
                 ]),
@@ -111,14 +111,14 @@ export async function POST(request: NextRequest) {
             databases.listDocuments(db, voteCollection, [
                 Query.equal("type", type),
                 Query.equal("typeId", typeId),
-                Query.equal("voteStatus", "upvoted"),
+                Query.equal("voteStatus", "upVote"),
                 Query.equal("votedById", votedById),
                 Query.limit(1), // for optimization as we only need total
             ]),
             databases.listDocuments(db, voteCollection, [
                 Query.equal("type", type),
                 Query.equal("typeId", typeId),
-                Query.equal("voteStatus", "downvoted"),
+                Query.equal("voteStatus", "downVote"),
                 Query.equal("votedById", votedById),
                 Query.limit(1), // for optimization as we only need total
             ]),

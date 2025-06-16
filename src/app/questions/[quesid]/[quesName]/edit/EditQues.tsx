@@ -1,6 +1,6 @@
 "use client";
 
-import QuestionForm from "@/components/QuestionForm";
+import QuestionForm from "@/components/QuestionFormComponent";
 import {answerCollection, db} from "@/Models/name";
 import {databases} from "@/Models/client/config";
 import {useAuthStore} from "@/store/Auth";

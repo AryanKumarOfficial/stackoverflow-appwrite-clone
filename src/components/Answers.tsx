@@ -10,6 +10,7 @@ import Comments from "./Comments";
 import slugify from "@/utils/slugify";
 import Link from "next/link";
 import {IconTrash} from "@tabler/icons-react";
+import toast from "react-hot-toast";
 
 const Answers = ({
                      answers: _answers,
@@ -51,11 +52,10 @@ const Answers = ({
                         downvotesDocuments: {documents: [], total: 0},
                         comments: {documents: [], total: 0},
                     },
-                    ...prev.documents,
-                ],
+                    ...prev.documents,                ],
             }));
         } catch (error: any) {
-            window.alert(error?.message || "Error creating answer");
+            toast.error(error?.message || "Error creating answer");
         }
     };
 
@@ -73,11 +73,10 @@ const Answers = ({
             if (!response.ok) throw data;
 
             setAnswers(prev => ({
-                total: prev.total - 1,
-                documents: prev.documents.filter(answer => answer.$id !== answerId),
+                total: prev.total - 1,                documents: prev.documents.filter(answer => answer.$id !== answerId),
             }));
         } catch (error: any) {
-            window.alert(error?.message || "Error deleting answer");
+            toast.error(error?.message || "Error deleting answer");
         }
     };
 

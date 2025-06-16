@@ -7,7 +7,7 @@ import slugify from "@/utils/slugify";
 import {avatars} from "@/Models/client/config";
 import convertDateToRelativeTime from "@/utils/relativeTime";
 
-const QuestionCard = ({ques}: { ques: Models.Document }) => {
+const QuestionForm = ({ques}: { ques: Models.Document }) => {
     const [height, setHeight] = React.useState(0);
     const ref = React.useRef<HTMLDivElement>(null);
 
@@ -67,4 +67,4 @@ const QuestionCard = ({ques}: { ques: Models.Document }) => {
     );
 };
 
-export default QuestionCard;
+export default QuestionForm;

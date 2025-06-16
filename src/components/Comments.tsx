@@ -10,6 +10,7 @@ import {IconTrash} from "@tabler/icons-react";
 import {ID, Models} from "appwrite";
 import Link from "next/link";
 import React from "react";
+import toast from "react-hot-toast";
 
 const Comments = ({
                       comments: _comments,
@@ -38,26 +39,23 @@ const Comments = ({
                 typeId: typeId,
             });
 
-            setNewComment(() => "");
-            setComments(prev => ({
+            setNewComment(() => "");            setComments(prev => ({
                 total: prev.total + 1,
                 documents: [{...response, author: user}, ...prev.documents],
             }));
         } catch (error: any) {
-            window.alert(error?.message || "Error creating comment");
+            toast.error(error?.message || "Error creating comment");
         }
     };
 
     const deleteComment = async (commentId: string) => {
         try {
-            await databases.deleteDocument(db, commentCollection, commentId);
-
-            setComments(prev => ({
+            await databases.deleteDocument(db, commentCollection, commentId);            setComments(prev => ({
                 total: prev.total - 1,
                 documents: prev.documents.filter(comment => comment.$id !== commentId),
             }));
         } catch (error: any) {
-            window.alert(error?.message || "Error deleting comment");
+            toast.error(error?.message || "Error deleting comment");
         }
     };
 
