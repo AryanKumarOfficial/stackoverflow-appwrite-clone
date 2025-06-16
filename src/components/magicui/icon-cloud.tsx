@@ -38,9 +38,15 @@ export const cloudProps: Omit<ICloud, "children"> = {
 };
 
 export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
-  const bgHex = theme === "light" ? "#f3f2ef" : "#080510";
-  const fallbackHex = theme === "light" ? "#6e6e73" : "#ffffff";
-  const minContrastRatio = theme === "dark" ? 2 : 1.2;
+  // Always use a transparent background to let the hero background show through
+  const bgHex = "#00000000"; // Transparent background
+  
+  // Use a high contrast color for the icons that will be visible on both light and dark backgrounds
+  // White is a safe choice for visibility on dark backgrounds
+  const fallbackHex = "#ffffff";
+  
+  // Ensure good contrast regardless of theme
+  const minContrastRatio = 3;
 
   return renderSimpleIcon({
     icon,

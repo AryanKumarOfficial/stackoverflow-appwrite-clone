@@ -72,7 +72,7 @@ const LatestQuestions = async () => {
     console.log(questions)
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center mb-6 pb-2 border-b border-gray-200">
+            <div className="flex justify-between items-center mb-6 pb-2 gap-48 border-b border-gray-200">
                 <h2 className="text-2xl font-semibold text-gray-400">Latest Questions</h2>
                 <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Recent</span>
             </div>
