@@ -12,10 +12,6 @@ const nextConfig = {
     compiler: {
         styledComponents: true,
     },
-    experimental: {
-        // Ensure pages are not cached
-        isrMemoryCacheSize: 0,
-    },
 };
 
 export default nextConfig;

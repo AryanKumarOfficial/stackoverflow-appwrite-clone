@@ -1,13 +1,13 @@
-import {cn} from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
-import {AnimatedList} from "@/components/magicui/animated-list";
-import {users} from "@/Models/server/config";
-import {Models, Query} from "node-appwrite";
-import {UserPrefs} from "@/store/Auth";
+import { AnimatedList } from "@/components/magicui/animated-list";
+import { users } from "@/Models/server/config";
+import { Models, Query } from "node-appwrite";
+import { UserPrefs } from "@/store/Auth";
 import convertDateToRelativeTime from "@/utils/relativeTime";
-import {avatars} from "@/Models/client/config";
+import { avatars } from "@/Models/client/config";
 
-const Notification = ({user}: { user: Models.User<UserPrefs> }) => {
+const Notification = ({ user }: { user: Models.User<UserPrefs> }) => {
     return (
         <figure
             className={cn(
@@ -53,10 +53,13 @@ export default async function TopContributers() {
 
     return (
         <div
-            className="bg-background relative flex max-h-[400px] min-h-[400px] w-full max-w-[32rem] flex-col overflow-hidden rounded-lg bg-white/10 p-6 shadow-lg">
+            className="relative flex max-h-[400px] min-h-[400px] w-full max-w-[32rem] flex-col overflow-hidden rounded-lg p-6 bg-white/10 shadow-lg mt-40">
+            <h2 className="mb-6 text-3xl font-bold text-center bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent dark:from-indigo-400 dark:via-purple-300 dark:to-pink-400 drop-shadow-sm">
+                Top Contributers
+            </h2>
             <AnimatedList>
                 {topUsers.users.map(user => (
-                    <Notification user={user} key={user.$id}/>
+                    <Notification user={user} key={user.$id} />
                 ))}
             </AnimatedList>
         </div>

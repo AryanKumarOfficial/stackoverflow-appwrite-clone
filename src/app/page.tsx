@@ -7,10 +7,10 @@ import TopContributers from "@/app/components/TopContributers";
 
 export default function Home() {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
-            <HeroSection/>
-            <LatestQuestions/>
-            <TopContributers/>
+        <main className="flex min-h-screen flex-col items-center justify-between p-24 ">
+            <HeroSection />
+            <LatestQuestions />
+            <TopContributers />
         </main>
     );
 }
