@@ -15,23 +15,27 @@ export async function POST(request: NextRequest) {
         ]);
 
         if (response.documents.length > 0) {
-            await databases.deleteDocument(db, voteCollection, response.documents[0].$id);
+            await databases.deleteDocument(db, voteCollection, response.documents[0].$id);            // Decrease the reputation of the question/answer author
+            try {
+                const questionOrAnswer = await databases.getDocument(
+                    db,
+                    type === "question" ? questionCollection : answerCollection,
+                    typeId
+                );
 
-            // Decrease the reputation of the question/answer author
-            const questionOrAnswer = await databases.getDocument(
-                db,
-                type === "question" ? questionCollection : answerCollection,
-                typeId
-            );
-
-            const authorPrefs = await users.getPrefs<UserPrefs>(questionOrAnswer.authorId);
-
-            await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
-                reputation:
-                    response.documents[0].voteStatus === "upvoted"
-                        ? Number(authorPrefs.reputation) - 1
-                        : Number(authorPrefs.reputation) + 1,
-            });
+                const authorPrefs = await users.getPrefs<UserPrefs>(questionOrAnswer.authorId);
+                const currentReputation = Number(authorPrefs.reputation || 0);
+                
+                await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
+                    reputation:
+                        response.documents[0].voteStatus === "upvoted"
+                            ? Math.max(0, currentReputation - 1)  // Ensure reputation doesn't go below 0
+                            : currentReputation + 1,
+                });
+            } catch (userError) {
+                console.error("Failed to update user reputation:", userError);
+                // Continue with the response even if updating reputation fails
+            }
         }
 
         // that means prev vote does not exists or voteStatus changed
@@ -41,34 +45,38 @@ export async function POST(request: NextRequest) {
                 typeId,
                 voteStatus,
                 votedById,
-            });
+            });            // Increase/Decrease the reputation of the question/answer author accordingly
+            try {
+                const questionOrAnswer = await databases.getDocument(
+                    db,
+                    type === "question" ? questionCollection : answerCollection,
+                    typeId
+                );
 
-            // Increate/Decrease the reputation of the question/answer author accordingly
-            const questionOrAnswer = await databases.getDocument(
-                db,
-                type === "question" ? questionCollection : answerCollection,
-                typeId
-            );
+                const authorPrefs = await users.getPrefs<UserPrefs>(questionOrAnswer.authorId);
+                const currentReputation = Number(authorPrefs.reputation || 0);
 
-            const authorPrefs = await users.getPrefs<UserPrefs>(questionOrAnswer.authorId);
-
-            // if vote was present
-            if (response.documents[0]) {
-                await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
-                    reputation:
-                    // that means prev vote was "upvoted" and new value is "downvoted" so we have to decrease the reputation
-                        response.documents[0].voteStatus === "upvoted"
-                            ? Number(authorPrefs.reputation) - 1
-                            : Number(authorPrefs.reputation) + 1,
-                });
-            } else {
-                await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
-                    reputation:
-                    // that means prev vote was "upvoted" and new value is "downvoted" so we have to decrease the reputation
-                        voteStatus === "upvoted"
-                            ? Number(authorPrefs.reputation) + 1
-                            : Number(authorPrefs.reputation) - 1,
-                });
+                // if vote was present
+                if (response.documents[0]) {
+                    await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
+                        reputation:
+                        // that means prev vote was "upvoted" and new value is "downvoted" so we have to decrease the reputation
+                            response.documents[0].voteStatus === "upvoted"
+                                ? Math.max(0, currentReputation - 1)
+                                : currentReputation + 1,
+                    });
+                } else {
+                    await users.updatePrefs<UserPrefs>(questionOrAnswer.authorId, {
+                        reputation:
+                        // for new votes, upvotes add reputation, downvotes reduce it
+                            voteStatus === "upvoted"
+                                ? currentReputation + 1
+                                : Math.max(0, currentReputation - 1),
+                    });
+                }
+            } catch (userError) {
+                console.error("Failed to update user reputation:", userError);
+                // Continue with the response even if updating reputation fails
             }
 
             const [upvotes, downvotes] = await Promise.all([

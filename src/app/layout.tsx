@@ -1,6 +1,11 @@
 import type {Metadata} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
+import { Toaster } from 'react-hot-toast';
+
+// Disable caching for the entire website
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const inter = Inter({subsets: ["latin"]});
 import {cn} from "@/lib/utils";
@@ -23,6 +28,16 @@ export default function RootLayout({
         <Header/>
         {children}
         <Footer/>
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#1e1e1e',
+              color: '#fff',
+            },
+          }}
+        />
         </body>
         </html>
     );
