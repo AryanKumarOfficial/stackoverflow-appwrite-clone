@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { cn } from "@/lib/utils";
+import React, {useState} from "react";
+import {AnimatePresence, motion, useMotionValueEvent, useScroll} from "framer-motion";
+import {cn} from "@/lib/utils";
 import Link from "next/link";
-import { useAuthStore } from "@/store/Auth";
+import {useAuthStore} from "@/store/Auth";
 
 export const FloatingNav = ({
                                 navItems,
@@ -16,9 +16,9 @@ export const FloatingNav = ({
     }[];
     className?: string;
 }) => {
-    const { scrollYProgress, scrollY } = useScroll();
+    const {scrollYProgress, scrollY} = useScroll();
 
-    const { session, logout } = useAuthStore();
+    const {session, logout} = useAuthStore();
 
     const [visible, setVisible] = useState(true);
 
@@ -63,16 +63,17 @@ export const FloatingNav = ({
                 )}
             >
                 {navItems.map((navItem: any, idx: number) => (
-                    <Link
-                        key={`link=${idx}`}
-                        href={navItem.link}
-                        className={cn(
-                            "relative flex items-center space-x-1 text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300"
-                        )}
-                    >
-                        <span className="block sm:hidden">{navItem.icon}</span>
-                        <span className="hidden text-sm sm:block">{navItem.name}</span>
-                    </Link>
+                    navItem.link === "/questions/ask" && !session ? null : // Hide "Ask a Question" if not logged in
+                        <Link
+                            key={`link=${idx}`}
+                            href={navItem.link}
+                            className={cn(
+                                "relative flex items-center space-x-1 text-neutral-600 hover:text-neutral-500 dark:text-neutral-50 dark:hover:text-neutral-300"
+                            )}
+                        >
+                            <span className="block sm:hidden">{navItem.icon}</span>
+                            <span className="hidden text-sm sm:block">{navItem.name}</span>
+                        </Link>
                 ))}
                 {session ? (
                     <button
@@ -80,7 +81,8 @@ export const FloatingNav = ({
                         className="relative rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-black dark:border-white/[0.2] dark:text-white"
                     >
                         <span>Logout</span>
-                        <span className="absolute inset-x-0 -bottom-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+                        <span
+                            className="absolute inset-x-0 -bottom-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent"/>
                     </button>
                 ) : (
                     <>
@@ -89,14 +91,16 @@ export const FloatingNav = ({
                             className="relative rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-black dark:border-white/[0.2] dark:text-white"
                         >
                             <span>Login</span>
-                            <span className="absolute inset-x-0 -bottom-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+                            <span
+                                className="absolute inset-x-0 -bottom-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent"/>
                         </Link>
                         <Link
                             href="/register"
                             className="relative rounded-full border border-neutral-200 px-4 py-2 text-sm font-medium text-black dark:border-white/[0.2] dark:text-white"
                         >
                             <span>Signup</span>
-                            <span className="absolute inset-x-0 -bottom-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+                            <span
+                                className="absolute inset-x-0 -bottom-px mx-auto h-px w-1/2 bg-gradient-to-r from-transparent via-blue-500 to-transparent"/>
                         </Link>
                     </>
                 )}

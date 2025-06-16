@@ -86,30 +86,41 @@ export default function Register() {
             {error && (
                 <p className="mt-8 text-center text-sm text-red-500 dark:text-red-400">{error}</p>
             )}
-            <form className="my-8" onSubmit={handleSubmit}>
-                <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
+            <form className="my-8" onSubmit={handleSubmit}>                <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
                     <LabelInputContainer>
-                        <Label htmlFor="firstname">First name</Label>
-                        <Input className="text-white" id="firstname" name="firstname" placeholder="Tyler" type="text"/>
+                        <Label htmlFor="firstname">First name</Label>                        <Input 
+                            className="text-neutral-800 dark:text-white placeholder:text-neutral-500 focus:dark:bg-zinc-700 transition-colors duration-200" 
+                            id="firstname" 
+                            name="firstname" 
+                            placeholder="Tyler" 
+                            type="text"
+                        />
                     </LabelInputContainer>
                     <LabelInputContainer>
-                        <Label htmlFor="lastname">Last name</Label>
-                        <Input className="text-white" id="lastname" name="lastname" placeholder="Durden" type="text"/>
+                        <Label htmlFor="lastname">Last name</Label>                        <Input 
+                            className="text-neutral-800 dark:text-white placeholder:text-neutral-500 focus:dark:bg-zinc-700 transition-colors duration-200" 
+                            id="lastname" 
+                            name="lastname" 
+                            placeholder="Durden" 
+                            type="text"
+                        />
                     </LabelInputContainer>
-                </div>
-                <LabelInputContainer className="mb-4">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                        className="text-white"
+                </div>                <LabelInputContainer className="mb-4">
+                    <Label htmlFor="email">Email Address</Label>                    <Input
+                        className="text-neutral-800 dark:text-white placeholder:text-neutral-500 focus:dark:bg-zinc-700 transition-colors duration-200"
                         id="email"
                         name="email"
                         placeholder="projectmayhem@fc.com"
                         type="email"
                     />
-                </LabelInputContainer>
-                <LabelInputContainer className="mb-4">
-                    <Label htmlFor="password">Password</Label>
-                    <Input className="text-white" id="password" name="password" placeholder="••••••••" type="password"/>
+                </LabelInputContainer>                <LabelInputContainer className="mb-4">
+                    <Label htmlFor="password">Password</Label>                    <Input 
+                        className="text-neutral-800 dark:text-white placeholder:text-neutral-500 focus:dark:bg-zinc-700 transition-colors duration-200" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        type="password"
+                    />
                 </LabelInputContainer>
 
                 <button

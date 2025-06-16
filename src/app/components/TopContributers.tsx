@@ -1,13 +1,14 @@
-import { cn } from "@/lib/utils";
+import {cn} from "@/lib/utils";
 
-import { AnimatedList } from "@/components/magicui/animated-list";
-import { users } from "@/Models/server/config";
-import { Models, Query } from "node-appwrite";
-import { UserPrefs } from "@/store/Auth";
+import {AnimatedList} from "@/components/magicui/animated-list";
+import {users} from "@/Models/server/config";
+import {Models, Query} from "node-appwrite";
+import {UserPrefs} from "@/store/Auth";
 import convertDateToRelativeTime from "@/utils/relativeTime";
-import { avatars } from "@/Models/client/config";
+import {avatars} from "@/Models/client/config";
+import Link from "next/link";
 
-const Notification = ({ user }: { user: Models.User<UserPrefs> }) => {
+const Notification = ({user}: { user: Models.User<UserPrefs> }) => {
     return (
         <figure
             className={cn(
@@ -20,7 +21,7 @@ const Notification = ({ user }: { user: Models.User<UserPrefs> }) => {
                 "transform-gpu dark:bg-transparent dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]"
             )}
         >
-            <div className="flex flex-row items-center gap-3">
+            <Link href={`/users/${user.$id}/${user.name}`} className="flex flex-row items-center gap-3">
                 <picture>
                     <img
                         src={avatars.getInitials(user.name, 40, 40).href}
@@ -43,7 +44,7 @@ const Notification = ({ user }: { user: Models.User<UserPrefs> }) => {
                         <span className="text-xs text-gray-500">{user.prefs.reputation}</span>
                     </p>
                 </div>
-            </div>
+            </Link>
         </figure>
     );
 };
@@ -59,7 +60,7 @@ export default async function TopContributers() {
             </h2>
             <AnimatedList>
                 {topUsers.users.map(user => (
-                    <Notification user={user} key={user.$id} />
+                    <Notification user={user} key={user.$id}/>
                 ))}
             </AnimatedList>
         </div>

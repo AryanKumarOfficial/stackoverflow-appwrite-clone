@@ -72,20 +72,22 @@ export default function Login() {
             {error && (
                 <p className="mt-8 text-center text-sm text-red-500 dark:text-red-400">{error}</p>
             )}
-            <form className="my-8" onSubmit={handleSubmit}>
-                <LabelInputContainer className="mb-4">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input
-                        className="text-black"
+            <form className="my-8" onSubmit={handleSubmit}>                <LabelInputContainer className="mb-4">
+                    <Label htmlFor="email">Email Address</Label>                    <Input
+                        className="text-neutral-800 dark:text-white placeholder:text-neutral-500 focus:dark:bg-zinc-700 transition-colors duration-200"
                         id="email"
                         name="email"
                         placeholder="projectmayhem@fc.com"
                         type="email"
                     />
-                </LabelInputContainer>
-                <LabelInputContainer className="mb-4">
-                    <Label htmlFor="password">Password</Label>
-                    <Input className="text-black" id="password" name="password" placeholder="••••••••" type="password" />
+                </LabelInputContainer>                <LabelInputContainer className="mb-4">
+                    <Label htmlFor="password">Password</Label>                    <Input 
+                        className="text-neutral-800 dark:text-white placeholder:text-neutral-500 focus:dark:bg-zinc-700 transition-colors duration-200" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        type="password" 
+                    />
                 </LabelInputContainer>
 
                 <button
