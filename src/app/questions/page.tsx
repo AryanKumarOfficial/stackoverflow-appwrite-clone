@@ -11,6 +11,15 @@ import Search from "./Search";
 import Particles from "@/components/magicui/particles";
 import {TracingBeam} from "@/components/ui/tracing-beam";
 
+export const revalidate = 60;
+
+export async function generateMetadata() {
+    return {
+        title: 'All Questions | Riverflow Q&A',
+        description: 'Browse all questions on Riverflow Q&A, a modern StackOverflow clone for developers.'
+    };
+}
+
 const Page = async ({
                         searchParams,
                     }: {

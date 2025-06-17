@@ -1,11 +1,13 @@
 import Pagination from "@/components/Pagination";
 import {MarkdownPreview} from "@/components/RTE";
 import {answerCollection, db, questionCollection} from "@/Models/name";
-import {databases} from "@/Models/server/config";
+import {databases, users} from "@/Models/server/config";
 import slugify from "@/utils/slugify";
 import Link from "next/link";
 import {Query} from "node-appwrite";
 import React from "react";
+
+export const revalidate = 60;
 
 const Page = async ({
                         params,
@@ -58,5 +60,20 @@ const Page = async ({
         </div>
     );
 };
+
+export async function generateMetadata({ params }: { params: { userId: string; userSlug: string } }) {
+    try {
+        const user = await users.get(params.userId);
+        return {
+            title: `Answers by ${user.name} | Riverflow Q&A`,
+            description: `Browse all answers given by ${user.name} on Riverflow Q&A.`
+        };
+    } catch {
+        return {
+            title: 'User Not Found | Riverflow Q&A',
+            description: 'This user profile could not be found.'
+        };
+    }
+}
 
 export default Page;

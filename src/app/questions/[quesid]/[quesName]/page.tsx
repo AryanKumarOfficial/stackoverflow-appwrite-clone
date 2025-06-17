@@ -1,10 +1,10 @@
 import Answers from "@/components/Answers";
 import Comments from "@/components/Comments";
-import {MarkdownPreview} from "@/components/RTE";
+import { MarkdownPreview } from "@/components/RTE";
 import VoteButtons from "@/components/VoteButtons";
 import Particles from "@/components/magicui/particles";
 import ShimmerButton from "@/components/magicui/shimmer-button";
-import {avatars, storage} from "@/Models/client/config";
+import { avatars, storage } from "@/Models/client/config";
 import {
     answerCollection,
     commentCollection,
@@ -13,37 +13,53 @@ import {
     questionCollection,
     voteCollection,
 } from "@/Models/name";
-import {databases, users} from "@/Models/server/config";
-import {UserPrefs} from "@/store/Auth";
+import { databases, users } from "@/Models/server/config";
+import { UserPrefs } from "@/store/Auth";
 import convertDateToRelativeTime from "@/utils/relativeTime";
 import slugify from "@/utils/slugify";
 import Link from "next/link";
-import {Query} from "node-appwrite";
+import { Query } from "node-appwrite";
 import React from "react";
 import DeleteQuestion from "./DeleteQuestion";
 import EditQuestion from "./EditQuestion";
-import {TracingBeam} from "@/components/ui/tracing-beam";
+import { TracingBeam } from "@/components/ui/tracing-beam";
 
 // Disable caching for this page
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const revalidate = 60;
 
-const Page = async ({params}: { params: { quesid: string; quesName: string } }) => {
+export async function generateMetadata({ params }: { params: { quesid: string; quesName: string } }) {
+    // Fetch the question for the title
+    try {
+        const question = await databases.getDocument(db, questionCollection, params.quesid);
+        return {
+            title: `${question.title} | Riverflow Q&A`,
+            description: question.content?.slice(0, 160) || 'View question and answers on Riverflow Q&A',
+        };
+    } catch {
+        return {
+            title: 'Question Not Found | Riverflow Q&A',
+            description: 'This question could not be found.',
+        };
+    }
+}
+
+const Page = async ({ params }: { params: { quesid: string; quesName: string } }) => {
     try {
         const [question, answers, upvotes, downvotes, comments] = await Promise.all([
             databases.getDocument(db, questionCollection, params.quesid),
             databases.listDocuments(db, answerCollection, [
                 Query.orderDesc("$createdAt"),
                 Query.equal("questionId", params.quesid),]),
-            databases.listDocuments(db, voteCollection, [                Query.equal("typeId", params.quesid),
-                Query.equal("type", "question"),
-                Query.equal("voteStatus", "upVote"),
-                Query.limit(1), // for optimization
+            databases.listDocuments(db, voteCollection, [Query.equal("typeId", params.quesid),
+            Query.equal("type", "question"),
+            Query.equal("voteStatus", "upVote"),
+            Query.limit(1), // for optimization
             ]),
-            databases.listDocuments(db, voteCollection, [                Query.equal("typeId", params.quesid),
-                Query.equal("type", "question"),
-                Query.equal("voteStatus", "downVote"),
-                Query.limit(1), // for optimization
+            databases.listDocuments(db, voteCollection, [Query.equal("typeId", params.quesid),
+            Query.equal("type", "question"),
+            Query.equal("voteStatus", "downVote"),
+            Query.limit(1), // for optimization
             ]), databases.listDocuments(db, commentCollection, [
                 Query.equal("type", "question"),
                 Query.equal("typeId", params.quesid),
@@ -60,7 +76,7 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
             author = {
                 $id: "unknown",
                 name: "Unknown User",
-                prefs: {reputation: 0},
+                prefs: { reputation: 0 },
             };
         }
 
@@ -75,7 +91,7 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                         commentAuthor = {
                             $id: "unknown",
                             name: "Unknown User",
-                            prefs: {reputation: 0},
+                            prefs: { reputation: 0 },
                         };
                     }
                     return {
@@ -98,15 +114,15 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                                 Query.equal("type", "answer"),
                                 Query.orderDesc("$createdAt"),
                             ]),
-                            databases.listDocuments(db, voteCollection, [                                Query.equal("typeId", answer.$id),
-                                Query.equal("type", "answer"),
-                                Query.equal("voteStatus", "upVote"),
-                                Query.limit(1), // for optimization
+                            databases.listDocuments(db, voteCollection, [Query.equal("typeId", answer.$id),
+                            Query.equal("type", "answer"),
+                            Query.equal("voteStatus", "upVote"),
+                            Query.limit(1), // for optimization
                             ]),
-                            databases.listDocuments(db, voteCollection, [                                Query.equal("typeId", answer.$id),
-                                Query.equal("type", "answer"),
-                                Query.equal("voteStatus", "downVote"),
-                                Query.limit(1), // for optimization
+                            databases.listDocuments(db, voteCollection, [Query.equal("typeId", answer.$id),
+                            Query.equal("type", "answer"),
+                            Query.equal("voteStatus", "downVote"),
+                            Query.limit(1), // for optimization
                             ]),
                         ]);
                     } catch (error) {
@@ -115,11 +131,11 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                         answerAuthor = {
                             $id: "unknown",
                             name: "Unknown User",
-                            prefs: {reputation: 0},
+                            prefs: { reputation: 0 },
                         };
-                        comments = {documents: [], total: 0};
-                        upvotes = {documents: [], total: 0};
-                        downvotes = {documents: [], total: 0};
+                        comments = { documents: [], total: 0 };
+                        upvotes = { documents: [], total: 0 };
+                        downvotes = { documents: [], total: 0 };
                     }
                     comments.documents = await Promise.all(
                         comments.documents.map(async comment => {
@@ -131,7 +147,7 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                                 commentAuthor = {
                                     $id: "unknown",
                                     name: "Unknown User",
-                                    prefs: {reputation: 0},
+                                    prefs: { reputation: 0 },
                                 };
                             }
                             return {
@@ -174,31 +190,31 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                             <h1 className="mb-1 text-3xl font-bold">{question.title}</h1>
                             <div className="flex gap-4 text-sm">
                                 <React.Fragment>
-                                <span>
-                                    Asked {convertDateToRelativeTime(new Date(question.$createdAt))}
-                                </span>
+                                    <span>
+                                        Asked {convertDateToRelativeTime(new Date(question.$createdAt))}
+                                    </span>
                                     <span className={`${answers.total > 0 ? 'font-bold text-green-500' : ''}`}>
-                                    Answers: {answers.total}
+                                        Answers: {answers.total}
                                         {answers.total > 0 && (
                                             <span className="ml-1 text-xs text-gray-400">
-                                            (Cannot edit/delete questions with answers)
-                                        </span>
+                                                (Cannot edit/delete questions with answers)
+                                            </span>
                                         )}
-                                </span>
+                                    </span>
                                     <span>Votes: {upvotes.total + downvotes.total}</span>
                                 </React.Fragment>
                             </div>
                         </div>
                         <Link href="/questions/ask" className="ml-auto inline-block shrink-0">
                             <ShimmerButton className="shadow-2xl">
-                            <span
-                                className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
-                                Ask a question
-                            </span>
+                                <span
+                                    className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
+                                    Ask a question
+                                </span>
                             </ShimmerButton>
                         </Link>
                     </div>
-                    <hr className="my-4 border-white/40"/>
+                    <hr className="my-4 border-white/40" />
                     <div className="flex gap-4">
                         <div className="flex shrink-0 flex-col items-center gap-4">
                             <VoteButtons
@@ -213,10 +229,10 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                                 questionTitle={question.title}
                                 authorId={question.authorId}
                             />
-                            <DeleteQuestion questionId={question.$id} authorId={question.authorId}/>
+                            <DeleteQuestion questionId={question.$id} authorId={question.authorId} />
                         </div>
                         <div className="w-full overflow-auto">
-                            <MarkdownPreview className="rounded-xl p-4" source={question.content}/>
+                            <MarkdownPreview className="rounded-xl p-4" source={question.content} />
                             <picture>
                                 <img
                                     src={
@@ -266,10 +282,10 @@ const Page = async ({params}: { params: { quesid: string; quesName: string } }) 
                                 type="question"
                                 typeId={question.$id}
                             />
-                            <hr className="my-4 border-white/40"/>
+                            <hr className="my-4 border-white/40" />
                         </div>
                     </div>
-                    <Answers answers={answers} questionId={question.$id}/>
+                    <Answers answers={answers} questionId={question.$id} />
                 </div>
             </TracingBeam>
         );

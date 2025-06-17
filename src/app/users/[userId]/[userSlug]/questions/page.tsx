@@ -6,6 +6,8 @@ import {UserPrefs} from "@/store/Auth";
 import {Query} from "node-appwrite";
 import React from "react";
 
+export const revalidate = 60;
+
 const Page = async ({
                         params,
                         searchParams,
@@ -66,5 +68,20 @@ const Page = async ({
         </div>
     );
 };
+
+export async function generateMetadata({ params }: { params: { userId: string; userSlug: string } }) {
+    try {
+        const user = await users.get(params.userId);
+        return {
+            title: `Questions by ${user.name} | Riverflow Q&A`,
+            description: `Browse all questions asked by ${user.name} on Riverflow Q&A.`
+        };
+    } catch {
+        return {
+            title: 'User Not Found | Riverflow Q&A',
+            description: 'This user profile could not be found.'
+        };
+    }
+}
 
 export default Page;

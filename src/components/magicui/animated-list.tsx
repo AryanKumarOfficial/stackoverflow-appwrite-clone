@@ -1,3 +1,4 @@
+// components/magicui/animated-list.tsx
 "use client";
 
 import React, { ReactElement, useEffect, useMemo, useState } from "react";
@@ -7,52 +8,64 @@ export interface AnimatedListProps {
   className?: string;
   children: React.ReactNode;
   delay?: number;
+  duration?: number;
 }
 
 export const AnimatedList = React.memo(
-  ({ className, children, delay = 1000 }: AnimatedListProps) => {
+  ({ className, children, delay = 500, duration = 300 }: AnimatedListProps) => {
     const [index, setIndex] = useState(0);
     const childrenArray = React.Children.toArray(children);
+    const totalChildren = childrenArray.length;
 
     useEffect(() => {
-      const interval = setInterval(() => {
-        setIndex((prevIndex) => (prevIndex + 1) % childrenArray.length);
+      if (index >= totalChildren) return;
+
+      const timer = setTimeout(() => {
+        setIndex(prev => Math.min(prev + 1, totalChildren));
       }, delay);
 
-      return () => clearInterval(interval);
-    }, [childrenArray.length, delay]);
+      return () => clearTimeout(timer);
+    }, [index, totalChildren, delay]);
 
-    const itemsToShow = useMemo(
-      () => childrenArray.slice(0, index + 1).reverse(),
-      [index, childrenArray],
-    );
+    const itemsToShow = useMemo(() => {
+      return childrenArray.slice(0, index);
+    }, [index, childrenArray]);
 
     return (
       <div className={`flex flex-col items-center gap-4 ${className}`}>
         <AnimatePresence>
           {itemsToShow.map((item) => (
-            <AnimatedListItem key={(item as ReactElement).key}>
+            <AnimatedListItem key={(item as ReactElement).key} duration={duration}>
               {item}
             </AnimatedListItem>
           ))}
         </AnimatePresence>
       </div>
     );
-  },
+  }
 );
 
 AnimatedList.displayName = "AnimatedList";
 
-export function AnimatedListItem({ children }: { children: React.ReactNode }) {
-  const animations = {
-    initial: { scale: 0, opacity: 0 },
-    animate: { scale: 1, opacity: 1, originY: 0 },
-    exit: { scale: 0, opacity: 0 },
-    transition: { type: "spring", stiffness: 350, damping: 40 },
-  };
+interface AnimatedListItemProps {
+  children: React.ReactNode;
+  duration?: number;
+}
 
+export function AnimatedListItem({ children, duration = 300 }: AnimatedListItemProps) {
   return (
-    <motion.div {...animations} layout className="mx-auto w-full">
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0, y: 20 }}
+      animate={{ scale: 1, opacity: 1, y: 0 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{
+        duration: duration / 1000,
+        ease: "easeOut",
+        bounce: 0.25
+      }}
+      layout
+      className="mx-auto w-full"
+    >
       {children}
     </motion.div>
   );

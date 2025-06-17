@@ -7,6 +7,23 @@ import {answerCollection, db, questionCollection} from "@/Models/name";
 import {Query} from "node-appwrite";
 import Link from "next/link";
 
+export const revalidate = 60;
+
+export async function generateMetadata({ params }: { params: { userId: string; userSlug: string } }) {
+    try {
+        const user = await users.get(params.userId);
+        return {
+            title: `${user.name} | Profile | Riverflow Q&A`,
+            description: `View the profile, questions, and answers of ${user.name} on Riverflow Q&A.`
+        };
+    } catch {
+        return {
+            title: 'User Not Found | Riverflow Q&A',
+            description: 'This user profile could not be found.'
+        };
+    }
+}
+
 const Page = async ({params}: { params: { userId: string; userSlug: string } }) => {
     try {
         const [user, questions, answers] = await Promise.all([
