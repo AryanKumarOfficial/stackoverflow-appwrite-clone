@@ -100,7 +100,7 @@ const LatestQuestions = () => {
       </div>
 
       <div className="space-y-6">
-        {questions.documents.map((question, index) => (
+        {questions.map((question, index) => (
           <div
             key={question.$id}
             className="transform hover:scale-[1.02] transition-all duration-300"
