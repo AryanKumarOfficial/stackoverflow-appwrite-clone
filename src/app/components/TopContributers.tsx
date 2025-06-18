@@ -78,28 +78,100 @@ const UserNotification = ({
   );
 };
 
-export default async function TopContributors() {
-  // Fetch up to 50 users, sort by reputation in JS, and show top 10
-  const topUsers = await users.list<UserPrefs>([Query.limit(50)]);
-  // Filter, deduplicate, and sort by reputation descending
-  const seen = new Set<string>(); // Specify that the set will hold strings
-  const filtered = topUsers.users
-    .filter(
-      (u) =>
-        u.email &&
-        !isNaN(Number(u.prefs?.reputation)) &&
-        Number(u.prefs.reputation) > 0,
-    )
-    .filter((u) => {
-      // Correctly check for and add the user's ID for deduplication
-      if (seen.has(u.$id)) {
-        return false;
-      }
-      seen.add(u.$id);
-      return true;
-    })
-    .sort((a, b) => Number(b.prefs.reputation) - Number(a.prefs.reputation))
-    .slice(0, 10); // Take the top 10 after sorting
+export default function TopContributors() {
+  const {
+    data: topUsers,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useTopContributors(10);
+
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-6xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            Top Contributors
+          </h2>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Celebrating our most active community members
+          </p>
+        </div>
+
+        <div className="relative flex max-h-[600px] min-h-[500px] w-full max-w-[40rem] mx-auto flex-col overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-[#1a1a2e]/90 via-[#23234d]/90 to-[#0f3460]/90 shadow-2xl border border-white/10 backdrop-blur-lg">
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center space-y-4">
+              <Loader2 className="w-8 h-8 animate-spin text-pink-500 mx-auto" />
+              <p className="text-gray-400">Loading top contributors...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full max-w-6xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            Top Contributors
+          </h2>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Celebrating our most active community members
+          </p>
+        </div>
+
+        <div className="relative flex max-h-[600px] min-h-[500px] w-full max-w-[40rem] mx-auto flex-col overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-[#1a1a2e]/90 via-[#23234d]/90 to-[#0f3460]/90 shadow-2xl border border-white/10 backdrop-blur-lg">
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center space-y-4">
+              <AlertCircle className="w-8 h-8 text-red-500 mx-auto" />
+              <p className="text-gray-400">Failed to load contributors</p>
+              <button
+                onClick={() => refetch()}
+                className="flex items-center gap-2 px-4 py-2 bg-pink-600 hover:bg-pink-700 rounded-lg text-white font-medium transition-colors mx-auto"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!topUsers || topUsers.length === 0) {
+    return (
+      <div className="w-full max-w-6xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            Top Contributors
+          </h2>
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            Celebrating our most active community members
+          </p>
+        </div>
+
+        <div className="relative flex max-h-[600px] min-h-[500px] w-full max-w-[40rem] mx-auto flex-col overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-[#1a1a2e]/90 via-[#23234d]/90 to-[#0f3460]/90 shadow-2xl border border-white/10 backdrop-blur-lg">
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center space-y-4">
+              <div className="text-6xl">👥</div>
+              <p className="text-gray-400">No contributors yet</p>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-pink-500/25"
+              >
+                Be the First Contributor
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-6xl mx-auto px-4">
       <div className="text-center mb-12">
