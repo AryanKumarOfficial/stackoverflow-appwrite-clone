@@ -7,126 +7,131 @@ import VirtualizedQuestionList from "@/components/VirtualizedQuestionList";
 import { AdvancedSearch } from "@/components/DebouncedSearch";
 import Particles from "@/components/magicui/particles";
 import { TracingBeam } from "@/components/ui/tracing-beam";
-import { useInfiniteQuestions } from "@/hooks/api/questions";
 import { Filter, Grid, List } from "lucide-react";
 
-export default function Page() {
+export default function QuestionsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<
+    "newest" | "oldest" | "votes" | "answers"
+  >("newest");
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
-const Page = async ({
-                        searchParams,
-                    }: {
-    searchParams: { page?: string; tag?: string; search?: string };
-}) => {
-    try {
-        searchParams.page ||= "1";
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
 
-        const queries = [
-            Query.orderDesc("$createdAt"),
-            Query.offset((+searchParams.page - 1) * 25),
-            Query.limit(25),
-        ];
+  const handleTagsChange = useCallback((tags: string[]) => {
+    setSelectedTags(tags);
+  }, []);
 
-        if (searchParams.tag) queries.push(Query.equal("tags", searchParams.tag));
-        if (searchParams.search)
-            queries.push(
-                Query.or([
-                    Query.search("title", searchParams.search),
-                    Query.search("content", searchParams.search),
-                ])
-            );
+  const handleSortChange = useCallback(
+    (sort: "newest" | "oldest" | "votes" | "answers") => {
+      setSortBy(sort);
+    },
+    [],
+  );
 
-        const questions = await databases.listDocuments(db, questionCollection, queries);
+  // Prepare filters for the API
+  const filters = {
+    search: searchQuery,
+    tags: selectedTags,
+    sortBy,
+  };
 
-        questions.documents = await Promise.all(
-            questions.documents.map(async ques => {
-                try {
-                    const [author, answers, votes] = await Promise.all([
-                        users.get<UserPrefs>(ques.authorId),
-                        databases.listDocuments(db, answerCollection, [
-                            Query.equal("questionId", ques.$id),
-                            Query.limit(1), // for optimization
-                        ]),
-                        databases.listDocuments(db, voteCollection, [
-                            Query.equal("type", "question"),
-                            Query.equal("typeId", ques.$id),
-                            Query.limit(1), // for optimization
-                        ]),
-                    ]);
+  return (
+    <TracingBeam className="container pl-6">
+      <Particles
+        className="fixed inset-0 h-full w-full"
+        quantity={300}
+        ease={100}
+        color="#ffffff"
+        refresh
+      />
+      <div className="mx-auto px-4 pb-20 pt-36 relative z-10">
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+              All Questions
+            </h1>
+            <p className="text-gray-400">
+              Explore questions from our developer community
+            </p>
+          </div>
+          <Link href="/questions/ask">
+            <ShimmerButton className="shadow-2xl">
+              <span className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
+                Ask a Question
+              </span>
+            </ShimmerButton>
+          </Link>
+        </div>
 
-                    return {
-                        ...ques,
-                        totalAnswers: answers.total,
-                        totalVotes: votes.total,
-                        author: {
-                            $id: author.$id,
-                            reputation: author.prefs?.reputation || 0,
-                            name: author.name,
-                        },
-                    };
-                } catch (error) {
-                    console.error(`Error fetching data for question ${ques.$id}:`, error);
-                    return {
-                        ...ques,
-                        totalAnswers: 0,
-                        totalVotes: 0,
-                        author: {
-                            $id: "unknown",
-                            reputation: 0,
-                            name: "Unknown User",
-                        },
-                    };
-                }
-            })
-        );
+        {/* Search and Filters */}
+        <div className="mb-8 space-y-4">
+          <AdvancedSearch
+            onSearch={handleSearch}
+            selectedTags={selectedTags}
+            onTagsChange={handleTagsChange}
+            sortBy={sortBy}
+            onSortChange={handleSortChange}
+            placeholder="Search questions by title, content, or tags..."
+            className="w-full"
+          />
+        </div>
 
-        return (
-            <TracingBeam className="container pl-6">
-                <Particles
-                    className="fixed inset-0 h-full w-full"
-                    quantity={500}
-                    ease={100}
-                    color="#ffffff"
-                    refresh
-                />
-                <div className="mx-auto px-4 pb-20 pt-36">
-                    <div className="mb-10 flex items-center justify-between">
-                        <h1 className="text-3xl font-bold">All Questions</h1>
-                        <Link href="/questions/ask">
-                            <ShimmerButton className="shadow-2xl">
-                            <span
-                                className="whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10 lg:text-lg">
-                                Ask a question
-                            </span>
-                            </ShimmerButton>
-                        </Link>
-                    </div>
-                    <div className="mb-4">
-                        <Search/>
-                    </div>
-                    <div className="mb-4">
-                        <p>{questions.total} questions</p>
-                    </div>
-                    <div className="mb-4 max-w-3xl space-y-6">
-                        {questions.documents.map(ques => (
-                            <QuestionCard key={ques.$id} ques={ques}/>
-                        ))}
-                    </div>
-                    <Pagination total={questions.total} limit={25}/>
-                </div>
-            </TracingBeam>
-        );
-    } catch (error) {
-        console.error("Failed to load questions page:", error);
-        return (
-            <div className="container mx-auto mt-10 p-4">
-                <h1 className="text-2xl font-bold text-red-500">Error</h1>
-                <p>There was a problem loading the questions. Please try again later.</p>
-                <div className="mt-4">
-                    <Link href="/" className="text-blue-500 hover:underline">Back to Home</Link>
-                </div>
+        {/* View Mode Toggle */}
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-400">View:</span>
+            <div className="flex items-center bg-white/5 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded transition-colors ${
+                  viewMode === "list"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded transition-colors ${
+                  viewMode === "grid"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <Grid className="w-4 h-4" />
+              </button>
             </div>
-        );
-    }
-};
+          </div>
 
-export default Page;
+          {/* Active Filters Display */}
+          {(selectedTags.length > 0 || searchQuery || sortBy !== "newest") && (
+            <div className="flex items-center gap-2 text-sm">
+              <Filter className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-400">
+                {selectedTags.length > 0 &&
+                  `${selectedTags.length} tag${selectedTags.length > 1 ? "s" : ""}`}
+                {searchQuery && ` • searching "${searchQuery}"`}
+                {sortBy !== "newest" && ` • sorted by ${sortBy}`}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Questions List */}
+        <div className="w-full">
+          <VirtualizedQuestionList
+            filters={filters}
+            height={800}
+            itemHeight={viewMode === "grid" ? 300 : 220}
+          />
+        </div>
+      </div>
+    </TracingBeam>
+  );
+}
