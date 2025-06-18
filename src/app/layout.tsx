@@ -1,18 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "react-hot-toast";
-import { QueryProvider } from "@/lib/react-query";
-import ErrorBoundary from "@/components/ErrorBoundary";
-
-// Disable caching for the entire website
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 const inter = Inter({ subsets: ["latin"] });
 import { cn } from "@/lib/utils";
-import Header from "./components/Header";
-import Footer from "@/app/components/Footer";
 
 export const metadata: Metadata = {
   title: "Riverflow - Modern Q&A Platform | StackOverflow Clone",
