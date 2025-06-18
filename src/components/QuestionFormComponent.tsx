@@ -4,8 +4,12 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ID, Models } from "appwrite";
 import { databases, storage } from "@/Models/client/config";
-import { db, questionCollection, questionAttachmentBucket } from "@/Models/name";
-import { useAuthStore } from "@/store/Auth";
+import {
+  db,
+  questionCollection,
+  questionAttachmentBucket,
+} from "@/Models/name";
+import { useAuthStore } from "@/store/AuthStore";
 import slugify from "@/utils/slugify";
 import RTE from "./RTE";
 import toast from "react-hot-toast";
@@ -28,10 +32,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
     if (ques && ques.attachmentId) {
       // Set the preview for existing image
       setPreview(
-        storage.getFilePreview(
-          questionAttachmentBucket,
-          ques.attachmentId
-        ).href
+        storage.getFilePreview(questionAttachmentBucket, ques.attachmentId)
+          .href,
       );
     }
   }, [ques]);
@@ -40,7 +42,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -65,14 +67,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
     }
 
     setIsSubmitting(true);
-    
+
     try {
       // Process tags
       const tagList = tags
         .split(",")
         .map((tag: string) => tag.trim().toLowerCase())
         .filter((tag: string) => tag.length > 0);
-      
+
       let attachmentId = ques?.attachmentId || "";
 
       // Handle file upload if there is a new file
@@ -80,7 +82,10 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
         // Delete old attachment if it exists
         if (ques?.attachmentId) {
           try {
-            await storage.deleteFile(questionAttachmentBucket, ques.attachmentId);
+            await storage.deleteFile(
+              questionAttachmentBucket,
+              ques.attachmentId,
+            );
           } catch (error) {
             console.error("Error deleting old attachment:", error);
           }
@@ -90,7 +95,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
         const upload = await storage.createFile(
           questionAttachmentBucket,
           ID.unique(),
-          file
+          file,
         );
         attachmentId = upload.$id;
       }
@@ -109,7 +114,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
           db,
           questionCollection,
           ques.$id,
-          questionData
+          questionData,
         );
         toast.success("Question updated successfully");
         router.push(`/questions/${ques.$id}/${slugify(title)}`);
@@ -119,7 +124,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
           db,
           questionCollection,
           ID.unique(),
-          questionData
+          questionData,
         );
         toast.success("Question posted successfully");
         router.push(`/questions/${response.$id}/${slugify(title)}`);
@@ -170,7 +175,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
           required
         />
         <p className="text-sm text-gray-400">
-          Add up to 5 tags to describe what your question is about. Separate tags with commas.
+          Add up to 5 tags to describe what your question is about. Separate
+          tags with commas.
         </p>
       </div>
 
@@ -188,13 +194,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
         <p className="text-sm text-gray-400">
           Add an image to help explain your question
         </p>
-        
+
         {preview && (
           <div className="mt-2">
             <p className="mb-1 text-sm">Image Preview:</p>
-            <img 
-              src={preview} 
-              alt="Attachment preview" 
+            <img
+              src={preview}
+              alt="Attachment preview"
               className="max-h-40 rounded-md border border-white/20"
             />
           </div>
@@ -206,9 +212,13 @@ const QuestionForm: React.FC<QuestionFormProps> = ({ ques }) => {
         disabled={isSubmitting}
         className="rounded-md bg-orange-500 px-4 py-2 font-bold text-white hover:bg-orange-600 disabled:opacity-50"
       >
-        {isSubmitting 
-          ? (ques ? "Updating..." : "Posting...") 
-          : (ques ? "Update Question" : "Post Question")}
+        {isSubmitting
+          ? ques
+            ? "Updating..."
+            : "Posting..."
+          : ques
+            ? "Update Question"
+            : "Post Question"}
       </button>
     </form>
   );

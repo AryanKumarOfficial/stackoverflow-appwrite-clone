@@ -1,128 +1,136 @@
 "use client";
 
-import {databases} from "@/Models/client/config";
-import {db, voteCollection} from "@/Models/name";
-import {useAuthStore} from "@/store/Auth";
-import {cn} from "@/lib/utils";
-import {IconCaretUpFilled, IconCaretDownFilled} from "@tabler/icons-react";
-import {ID, Models, Query} from "appwrite";
-import {useRouter} from "next/navigation";
+import { databases } from "@/Models/client/config";
+import { db, voteCollection } from "@/Models/name";
+import { useAuthStore } from "@/store/AuthStore";
+import { cn } from "@/lib/utils";
+import { IconCaretUpFilled, IconCaretDownFilled } from "@tabler/icons-react";
+import { ID, Models, Query } from "appwrite";
+import { useRouter } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
 
 const VoteButtons = ({
-                         type,
-                         id,
-                         upvotes,
-                         downvotes,
-                         className,
-                     }: {
-    type: "question" | "answer";
-    id: string;
-    upvotes: Models.DocumentList<Models.Document>;
-    downvotes: Models.DocumentList<Models.Document>;
-    className?: string;
+  type,
+  id,
+  upvotes,
+  downvotes,
+  className,
+}: {
+  type: "question" | "answer";
+  id: string;
+  upvotes: Models.DocumentList<Models.Document>;
+  downvotes: Models.DocumentList<Models.Document>;
+  className?: string;
 }) => {
-    const [votedDocument, setVotedDocument] = React.useState<Models.Document | null>(); // undefined means not fetched yet
-    const [voteResult, setVoteResult] = React.useState<number>(upvotes.total - downvotes.total);
+  const [votedDocument, setVotedDocument] =
+    React.useState<Models.Document | null>(); // undefined means not fetched yet
+  const [voteResult, setVoteResult] = React.useState<number>(
+    upvotes.total - downvotes.total,
+  );
 
-    const {user} = useAuthStore();
-    const router = useRouter();
+  const { user } = useAuthStore();
+  const router = useRouter();
 
-    React.useEffect(() => {
-        (async () => {
-            if (user) {
-                const response = await databases.listDocuments(db, voteCollection, [
-                    Query.equal("type", type),
-                    Query.equal("typeId", id),
-                    Query.equal("votedById", user.$id),
-                ]);
-                setVotedDocument(() => response.documents[0] || null);
-            }
-        })();
-    }, [user, id, type]);
+  React.useEffect(() => {
+    (async () => {
+      if (user) {
+        const response = await databases.listDocuments(db, voteCollection, [
+          Query.equal("type", type),
+          Query.equal("typeId", id),
+          Query.equal("votedById", user.$id),
+        ]);
+        setVotedDocument(() => response.documents[0] || null);
+      }
+    })();
+  }, [user, id, type]);
 
-    const toggleUpvote = async () => {
-        if (!user) return router.push("/login");
+  const toggleUpvote = async () => {
+    if (!user) return router.push("/login");
 
-        if (votedDocument === undefined) return;
+    if (votedDocument === undefined) return;
 
-        try {
-            const response = await fetch(`/api/vote`, {
-                method: "POST",
-                body: JSON.stringify({
-                    votedById: user.$id,
-                    voteStatus: "upVote",
-                    type,
-                    typeId: id,
-                }),
-            });
+    try {
+      const response = await fetch(`/api/vote`, {
+        method: "POST",
+        body: JSON.stringify({
+          votedById: user.$id,
+          voteStatus: "upVote",
+          type,
+          typeId: id,
+        }),
+      });
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (!response.ok) throw data;
+      if (!response.ok) throw data;
 
-            setVoteResult(() => data.data.voteResult);
-            setVotedDocument(() => data.data.document);
-        } catch (error: any) {
-            toast.error(error?.message || "Something went wrong");
-        }
-    };
+      setVoteResult(() => data.data.voteResult);
+      setVotedDocument(() => data.data.document);
+    } catch (error: any) {
+      toast.error(error?.message || "Something went wrong");
+    }
+  };
 
-    const toggleDownvote = async () => {
-        if (!user) return router.push("/login");
+  const toggleDownvote = async () => {
+    if (!user) return router.push("/login");
 
-        if (votedDocument === undefined) return;
+    if (votedDocument === undefined) return;
 
-        try {
-            const response = await fetch(`/api/vote`, {
-                method: "POST",
-                body: JSON.stringify({
-                    votedById: user.$id,
-                    voteStatus: "downVote",
-                    type,
-                    typeId: id,
-                }),
-            });
+    try {
+      const response = await fetch(`/api/vote`, {
+        method: "POST",
+        body: JSON.stringify({
+          votedById: user.$id,
+          voteStatus: "downVote",
+          type,
+          typeId: id,
+        }),
+      });
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (!response.ok) throw data;
+      if (!response.ok) throw data;
 
-            setVoteResult(() => data.data.voteResult);
-            setVotedDocument(() => data.data.document);
-        } catch (error: any) {
-            toast.error(error?.message || "Something went wrong");
-        }
-    };
+      setVoteResult(() => data.data.voteResult);
+      setVotedDocument(() => data.data.document);
+    } catch (error: any) {
+      toast.error(error?.message || "Something went wrong");
+    }
+  };
 
-    return (
-        <div className={cn("flex shrink-0 flex-col items-center justify-start gap-y-4", className)}>
-            <button
-                className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full border p-1 duration-200 hover:bg-white/10",
-                    votedDocument && votedDocument.voteStatus === "upVote"
-                        ? "border-orange-500 text-orange-500"
-                        : "border-white/30"
-                )}
-                onClick={toggleUpvote}
-            >
-                <IconCaretUpFilled/>
-            </button>
-            <span>{voteResult}</span>
-            <button
-                className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full border p-1 duration-200 hover:bg-white/10",
-                    votedDocument && votedDocument.voteStatus === "downVote"
-                        ? "border-orange-500 text-orange-500"
-                        : "border-white/30"
-                )}
-                onClick={toggleDownvote}
-            >
-                <IconCaretDownFilled/>
-            </button>
-        </div>
-    );
+  return (
+    <div
+      className={cn(
+        "flex shrink-0 flex-col items-center justify-start gap-y-4",
+        className,
+      )}
+    >
+      <button
+        className={cn(
+          "flex h-10 w-10 items-center justify-center rounded-full border p-1 duration-200 hover:bg-white/10",
+          votedDocument && votedDocument.voteStatus === "upVote"
+            ? "border-orange-500 text-orange-500"
+            : "border-white/30",
+        )}
+        onClick={toggleUpvote}
+      >
+        <IconCaretUpFilled />
+      </button>
+      <span>{voteResult}</span>
+      <button
+        className={cn(
+          "flex h-10 w-10 items-center justify-center rounded-full border p-1 duration-200 hover:bg-white/10",
+          votedDocument && votedDocument.voteStatus === "downVote"
+            ? "border-orange-500 text-orange-500"
+            : "border-white/30",
+        )}
+        onClick={toggleDownvote}
+      >
+        <IconCaretDownFilled />
+      </button>
+    </div>
+  );
 };
 
 export default VoteButtons;
