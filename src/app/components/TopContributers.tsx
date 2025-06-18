@@ -1,11 +1,14 @@
-// components/top-contributors.tsx
+"use client";
+
+import React from "react";
 import { cn } from "@/lib/utils";
 import { AnimatedList } from "@/components/magicui/animated-list";
-import { users } from "@/Models/server/config";
-import { Models, Query } from "node-appwrite";
+import { useTopContributors } from "@/hooks/api/users";
+import { Models } from "node-appwrite";
 import { UserPrefs } from "@/store/Auth";
 import convertDateToRelativeTime from "@/utils/relativeTime";
 import { avatars } from "@/Models/client/config";
+import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 interface UserNotificationProps {
