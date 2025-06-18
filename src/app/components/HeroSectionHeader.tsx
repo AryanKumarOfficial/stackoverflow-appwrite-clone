@@ -104,7 +104,7 @@ const HeroSectionHeader = () => {
         <div className="flex items-center justify-center order-1 lg:order-2">
           <div className="relative max-w-[400px] lg:max-w-[500px] overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
-            <IconCloud iconSlugs={slugs} />
+            <ClientOnlyIconCloud iconSlugs={slugs} />
           </div>
         </div>
       </div>
