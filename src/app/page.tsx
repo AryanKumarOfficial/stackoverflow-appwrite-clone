@@ -42,7 +42,7 @@ export default function Home() {
         </section>
 
         {/* Top Contributors */}
-        <section className="py-20 flex justify-center">
+        <section className="py-20">
           <TopContributers />
         </section>
 
