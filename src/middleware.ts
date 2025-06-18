@@ -4,21 +4,24 @@ import getOrCreateDb from "@/Models/server/dbSetup";
 import getOrCreateStorage from "@/Models/server/storageSetup";
 
 export async function middleware(request: NextRequest) {
-  // Skip middleware for static assets and API routes
+  // Skip middleware for static assets, API routes, and build files
   if (
     request.nextUrl.pathname.startsWith("/_next") ||
     request.nextUrl.pathname.startsWith("/api") ||
     request.nextUrl.pathname === "/favicon.ico" ||
-    request.nextUrl.pathname.includes(".")
+    request.nextUrl.pathname.includes(".") ||
+    request.nextUrl.pathname.startsWith("/__nextjs")
   ) {
     return NextResponse.next();
   }
 
-  // Run database setup asynchronously without blocking the request
-  // This ensures the database is set up for the app to work properly
-  Promise.all([getOrCreateDb(), getOrCreateStorage()]).catch((error) => {
-    console.error("Database/Storage setup error:", error);
-  });
+  // Only run database setup for actual page requests and in development
+  if (process.env.NODE_ENV === "development") {
+    // Run database setup asynchronously without blocking the request
+    Promise.all([getOrCreateDb(), getOrCreateStorage()]).catch((error) => {
+      console.error("Database/Storage setup error:", error);
+    });
+  }
 
   return NextResponse.next();
 }
