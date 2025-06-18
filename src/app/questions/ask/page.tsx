@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useAuthStore } from "@/store/Auth";
+import { useAuthStore } from "@/store/AuthStore";
 import { useRouter } from "next/navigation";
 import QuestionForm from "@/components/QuestionFormComponent";
 import Particles from "@/components/magicui/particles";
@@ -19,11 +19,13 @@ const AskQuestionPage = () => {
   }, [user, router]);
 
   if (!user) {
-    return <div className="block pb-20 pt-32">
-      <div className="container mx-auto px-4">
-        <h1 className="mb-10 mt-4 text-2xl">Redirecting to login...</h1>
+    return (
+      <div className="block pb-20 pt-32">
+        <div className="container mx-auto px-4">
+          <h1 className="mb-10 mt-4 text-2xl">Redirecting to login...</h1>
+        </div>
       </div>
-    </div>;
+    );
   }
 
   return (
