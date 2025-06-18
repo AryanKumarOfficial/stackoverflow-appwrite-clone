@@ -110,13 +110,21 @@ The application leverages Appwrite's backend services for authentication, databa
 
 ### Environment Setup
 
-Create a `.env.local` file in the root directory with the following variables:
+1. Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+2. Update the `.env` file with your Appwrite credentials:
 
 ```env
-NEXT_PUBLIC_APPWRITE_HOST_URL=your_appwrite_host_url
-NEXT_PUBLIC_APPWRITE_PROJECT_ID=your_project_id
-APPWRITE_API_KEY=your_api_key
+NEXT_PUBLIC_APPWRITE_HOST_URL=https://cloud.appwrite.io/v1
+NEXT_PUBLIC_APPWRITE_PROJECT_ID=your_project_id_here
+APPWRITE_API_KEY=your_api_key_here
 ```
+
+**Important**: Never commit your `.env` file to version control as it contains sensitive credentials.
 
 ### Installation
 
@@ -230,7 +238,7 @@ I'm always happy to connect with fellow developers and users of this project!
 
 <div align="center">
   <h3>Meet the Author</h3>
-  
+
   <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px;">
     <img src="https://github.com/aryankumarofficial.png" width="100" height="100" style="border-radius: 50%;" alt="Developer Profile Picture">
     <div>
@@ -238,12 +246,13 @@ I'm always happy to connect with fellow developers and users of this project!
       <p>Passionate about building responsive web applications and sharing knowledge with the developer community.</p>
     </div>
   </div>
-  
+
   <div style="margin-top: 20px;">
     <a href="https://github.com/aryankumarofficial" target="_blank"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"></a>
     <a href="https://linkedin.com/in/aryankumarofficial" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
     <a href="https://x.com/_aryankofficial" target="_blank"><img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"></a>
   </div>
-  
-  <sub>Built with ❤️ by a passionate web developer</sub>
+
+<sub>Built with ❤️ by a passionate web developer</sub>
+
 </div>
