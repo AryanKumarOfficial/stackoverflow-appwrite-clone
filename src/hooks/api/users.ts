@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { users } from "@/Models/server/config";
-import { UserPrefs } from "@/store/Auth";
+import { UserPrefs } from "@/store/AuthStore";
 import { Query } from "node-appwrite";
 
 // User API interfaces
