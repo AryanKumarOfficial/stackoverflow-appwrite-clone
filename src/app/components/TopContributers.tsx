@@ -78,7 +78,6 @@ const UserNotification = ({
 export default async function TopContributors() {
   // Fetch up to 50 users, sort by reputation in JS, and show top 10
   const topUsers = await users.list<UserPrefs>([Query.limit(50)]);
-  // console.log("Top users fetched:", topUsers.users);
   // Filter, deduplicate, and sort by reputation descending
   const seen = new Set<string>(); // Specify that the set will hold strings
   const filtered = topUsers.users
