@@ -14,7 +14,7 @@ import {
   voteCollection,
 } from "@/Models/name";
 import { Query } from "node-appwrite";
-import { UserPrefs } from "@/store/Auth";
+import { UserPrefs } from "@/store/AuthStore";
 
 // Question API interfaces
 export interface Question {
