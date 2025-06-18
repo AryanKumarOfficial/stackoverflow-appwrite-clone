@@ -42,8 +42,8 @@ class ErrorBoundary extends Component<Props, State> {
       errorInfo,
     });
 
-    // Log error to monitoring service
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    // Report to monitoring service
+    reportErrorBoundary(error, errorInfo);
 
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
