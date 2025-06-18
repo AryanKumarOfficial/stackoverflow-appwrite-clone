@@ -1,77 +1,86 @@
-import QuestionCard from "@/components/QuestionCard";
-import {
-  answerCollection,
-  db,
-  questionCollection,
-  voteCollection,
-} from "@/Models/name";
-import { databases, users } from "@/Models/server/config";
-import { Query } from "node-appwrite";
-import Link from "next/link";
+"use client";
+
 import React from "react";
+import QuestionCard from "@/components/QuestionCard";
+import { useLatestQuestions } from "@/hooks/api/questions";
+import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import Link from "next/link";
 
-const LatestQuestions = async () => {
-  const questions = await databases.listDocuments(db, questionCollection, [
-    Query.limit(5),
-  ]);
+const LatestQuestions = () => {
+  const {
+    data: questions,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useLatestQuestions(5);
 
-  questions.documents = await Promise.all(
-    questions.documents.map(async (ques) => {
-      // Try to find the correct user ID field (might be authorId instead of userId)
-      const userId = ques.authorId || ques.userId;
+  if (isLoading) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            Latest Questions
+          </h2>
+        </div>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center space-y-4">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto" />
+            <p className="text-gray-400">Loading latest questions...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-      if (!userId) {
-        console.error("No user ID found for question:", ques.$id);
-        return {
-          ...ques,
-          totalAnswers: 0,
-          totalVotes: 0,
-          author: {
-            $id: "unknown",
-            reputation: 0,
-            name: "Unknown User",
-          },
-        };
-      }
+  if (isError) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            Latest Questions
+          </h2>
+        </div>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center space-y-4">
+            <AlertCircle className="w-8 h-8 text-red-500 mx-auto" />
+            <p className="text-gray-400">Failed to load questions</p>
+            <button
+              onClick={() => refetch()}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium transition-colors mx-auto"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-      try {
-        const [author, answers, votes] = await Promise.all([
-          users.get(userId),
-          databases.listDocuments(db, answerCollection, [
-            Query.equal("questionId", ques.$id),
-            Query.limit(1), // for optimization
-          ]),
-          databases.listDocuments(db, voteCollection, [
-            Query.equal("type", "question"),
-            Query.equal("typeId", ques.$id),
-            Query.limit(1), // for optimization
-          ]),
-        ]);
-        return {
-          ...ques,
-          totalAnswers: answers.total,
-          totalVotes: votes.total,
-          author: {
-            $id: author.$id,
-            reputation: author.prefs?.reputation || 0,
-            name: author.name,
-          },
-        };
-      } catch (error) {
-        console.error(`Error fetching data for question ${ques.$id}:`, error);
-        return {
-          ...ques,
-          totalAnswers: 0,
-          totalVotes: 0,
-          author: {
-            $id: "unknown",
-            reputation: 0,
-            name: "Unknown User",
-          },
-        };
-      }
-    }),
-  );
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            Latest Questions
+          </h2>
+        </div>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center space-y-4">
+            <div className="text-6xl">🤔</div>
+            <p className="text-gray-400">No questions yet</p>
+            <Link
+              href="/questions/ask"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-blue-500/25"
+            >
+              Ask the First Question
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto">
