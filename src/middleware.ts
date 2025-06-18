@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import getOrCreateDb from "@/Models/server/dbSetup";
-import getOrCreateStorage from "@/Models/server/storageSetup";
 
 export async function middleware(request: NextRequest) {
   // Skip middleware for static assets, API routes, and build files
@@ -15,14 +13,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Only run database setup for actual page requests and in development
-  if (process.env.NODE_ENV === "development") {
-    // Run database setup asynchronously without blocking the request
-    Promise.all([getOrCreateDb(), getOrCreateStorage()]).catch((error) => {
-      console.error("Database/Storage setup error:", error);
-    });
-  }
-
+  // For production, just pass through
+  // Database setup will be handled in API routes and server components
   return NextResponse.next();
 }
 
