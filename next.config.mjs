@@ -15,10 +15,6 @@ const nextConfig = {
 
   // Performance optimizations
   experimental: {
-    // Enable server components logging
-    logging: {
-      level: "verbose",
-    },
     // Optimize bundle size
     optimizePackageImports: [
       "@tanstack/react-query",
