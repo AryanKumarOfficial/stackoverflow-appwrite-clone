@@ -14,12 +14,9 @@ const LatestQuestions = async () => {
   const questions = await databases.listDocuments(db, questionCollection, [
     Query.limit(5),
   ]);
-  console.log("Fetched Questions:", questions);
+
   questions.documents = await Promise.all(
     questions.documents.map(async (ques) => {
-      // Log the question to see what fields are available
-      console.log("Question fields:", Object.keys(ques));
-
       // Try to find the correct user ID field (might be authorId instead of userId)
       const userId = ques.authorId || ques.userId;
 
