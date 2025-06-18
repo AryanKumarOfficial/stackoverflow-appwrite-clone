@@ -7,6 +7,7 @@ import {
 } from "@/Models/name";
 import { databases, users } from "@/Models/server/config";
 import { Query } from "node-appwrite";
+import Link from "next/link";
 import React from "react";
 
 const LatestQuestions = async () => {
