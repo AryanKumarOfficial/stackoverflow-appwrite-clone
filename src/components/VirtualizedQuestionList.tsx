@@ -164,6 +164,7 @@ export default function VirtualizedQuestionList({
           <List
             ref={ref}
             height={height}
+            width="100%"
             itemCount={itemCount}
             itemSize={itemHeight}
             onItemsRendered={onItemsRendered}
