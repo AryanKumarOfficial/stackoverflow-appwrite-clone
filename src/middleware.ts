@@ -4,22 +4,7 @@ import getOrCreateDb from "@/Models/server/dbSetup";
 import getOrCreateStorage from "@/Models/server/storageSetup";
 
 export async function middleware(request: NextRequest) {
-  // Only run database setup for actual page requests, not during build/startup
-  if (
-    request.nextUrl.pathname.startsWith("/_next") ||
-    request.nextUrl.pathname.startsWith("/api") ||
-    request.nextUrl.pathname === "/favicon.ico"
-  ) {
-    return NextResponse.next();
-  }
-
-  try {
-    await Promise.all([getOrCreateDb(), getOrCreateStorage()]);
-  } catch (error) {
-    console.error("Middleware error:", error);
-    // Don't block the request even if setup fails
-  }
-
+  // Temporarily disabled for debugging
   return NextResponse.next();
 }
 
