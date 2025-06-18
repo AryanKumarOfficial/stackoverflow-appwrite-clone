@@ -2,7 +2,7 @@
 
 import IconCloud from "@/components/magicui/icon-cloud";
 import ShimmerButton from "@/components/magicui/shimmer-button";
-import { useAuthStore } from "@/store/Auth";
+import { useAuthStore } from "@/store/AuthStore";
 import Link from "next/link";
 import React from "react";
 
