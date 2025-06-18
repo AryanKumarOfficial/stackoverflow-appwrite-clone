@@ -22,8 +22,6 @@ export default async function getOrCreateStorage() {
         undefined,
         ["jpeg", "jpg", "png", "gif", "webp", "heic"],
       );
-      console.log("Storage created");
-      console.log("Storage connected");
     } catch (error) {
       console.error("Error creating storage: ", error);
     }
