@@ -73,8 +73,6 @@ const LatestQuestions = async () => {
     }),
   );
 
-  console.log("Latest question");
-  console.log(questions);
   return (
     <div className="max-w-6xl mx-auto">
       <div className="text-center mb-12">
