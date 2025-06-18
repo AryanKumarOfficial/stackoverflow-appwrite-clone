@@ -18,9 +18,6 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// Temporarily disabled
-// export const config = {
-//     matcher: [
-//         "/((?!api|_next/static|_next/images|favicon.ico).*)",
-//     ]
-// }
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/images|favicon.ico).*)"],
+};
