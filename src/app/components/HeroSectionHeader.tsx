@@ -1,6 +1,6 @@
 "use client";
 
-import IconCloud from "@/components/magicui/icon-cloud";
+import ClientOnlyIconCloud from "@/components/ClientOnlyIconCloud";
 import ShimmerButton from "@/components/magicui/shimmer-button";
 import { useAuthStore } from "@/store/AuthStore";
 import Link from "next/link";
