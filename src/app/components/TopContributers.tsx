@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { AnimatedList } from "@/components/magicui/animated-list";
 import { useTopContributors } from "@/hooks/api/users";
 import { Models } from "node-appwrite";
-import { UserPrefs } from "@/store/Auth";
+import { UserPrefs } from "@/store/AuthStore";
 import convertDateToRelativeTime from "@/utils/relativeTime";
 import { avatars } from "@/Models/client/config";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
