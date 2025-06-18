@@ -2,6 +2,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { RefreshCw, AlertTriangle, Home } from "lucide-react";
+import { reportErrorBoundary } from "@/lib/monitoring";
 
 interface Props {
   children: ReactNode;
