@@ -186,7 +186,7 @@ export default function TopContributors() {
       <div className="relative flex max-h-[600px] min-h-[500px] w-full max-w-[40rem] mx-auto flex-col overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-[#1a1a2e]/90 via-[#23234d]/90 to-[#0f3460]/90 shadow-2xl border border-white/10 backdrop-blur-lg">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 rounded-3xl"></div>
         <AnimatedList className="relative z-10 w-full gap-6">
-          {filtered.map((user, idx) => (
+          {topUsers.map((user, idx) => (
             <UserNotification user={user} key={user.$id} rank={idx + 1} />
           ))}
         </AnimatedList>
