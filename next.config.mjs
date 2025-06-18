@@ -8,7 +8,26 @@ const nextConfig = {
 
   // Optimize images
   images: {
-    domains: ["cloud.appwrite.io", "localhost"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cloud.appwrite.io",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.builder.io",
+        port: "",
+        pathname: "/**",
+      },
+    ],
     formats: ["image/webp", "image/avif"],
     minimumCacheTTL: 60,
   },
