@@ -7,8 +7,9 @@ import { Models } from "appwrite";
 import slugify from "@/utils/slugify";
 import { avatars } from "@/Models/client/config";
 import convertDateToRelativeTime from "@/utils/relativeTime";
+import { Question } from "@/hooks/api/questions";
 
-const QuestionCard = ({ ques }: { ques: Models.Document }) => {
+const QuestionCard = ({ ques }: { ques: Question | Models.Document }) => {
   const [height, setHeight] = React.useState(0);
   const ref = React.useRef<HTMLDivElement>(null);
 
