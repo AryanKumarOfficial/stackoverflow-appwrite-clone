@@ -97,11 +97,6 @@ export default async function TopContributors() {
     })
     .sort((a, b) => Number(b.prefs.reputation) - Number(a.prefs.reputation))
     .slice(0, 10); // Take the top 10 after sorting
-
-  // console.log("Filtered and sorted users:", filtered);
-  // DEBUG: Log filtered users
-  console.log("seen users:", seen);
-  console.log(filtered.map((u) => u));
   return (
     <div className="w-full max-w-6xl mx-auto px-4">
       <div className="text-center mb-12">
