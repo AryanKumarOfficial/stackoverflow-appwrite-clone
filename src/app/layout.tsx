@@ -59,23 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={cn(inter.className, "dark:bg-black dark:text-white")}>
-        <QueryProvider>
-          <ErrorBoundary>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: "#1e1e1e",
-                  color: "#fff",
-                },
-              }}
-            />
-          </ErrorBoundary>
-        </QueryProvider>
+        <main>{children}</main>
       </body>
     </html>
   );
