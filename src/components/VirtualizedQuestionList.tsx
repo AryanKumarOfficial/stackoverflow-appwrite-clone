@@ -160,7 +160,7 @@ export default function VirtualizedQuestionList({
         loadMoreItems={loadMoreItems}
         threshold={5} // Start loading when 5 items from the end
       >
-        {({ onItemsRendered, ref }) => (
+        {({ onItemsRendered, ref }: any) => (
           <List
             ref={ref}
             height={height}
