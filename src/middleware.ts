@@ -18,12 +18,9 @@ export async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = {
-  /* math all request paths except for the ones that start with:
-    - api
-    - _next/static
-    - _next/images
-    - favicon.ico
-     */
-  matcher: ["/((?!api|_next/static|_next/images|favicon.ico).*)"],
-};
+// Temporarily disabled
+// export const config = {
+//     matcher: [
+//         "/((?!api|_next/static|_next/images|favicon.ico).*)",
+//     ]
+// }
