@@ -19,11 +19,8 @@ export default async function getOrCreateDb() {
         createCommentCollection(),
         createVoteCollection(),
       ]);
-
-      console.log("Collection created");
-      console.log("Database connected");
     } catch (error) {
-      console.log("Error creating ...", error);
+      console.error("Error creating database:", error);
     }
   }
 
