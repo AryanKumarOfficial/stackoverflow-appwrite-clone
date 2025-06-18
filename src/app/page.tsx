@@ -30,7 +30,7 @@ export default function Home() {
         </section>
 
         {/* Feature Section */}
-        <section className="py-20">
+        <section className="py-20 animate-fadeInUp">
           <FeatureSection />
         </section>
 
